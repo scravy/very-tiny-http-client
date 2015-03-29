@@ -115,7 +115,7 @@ function request(method) {
 
         req.on('error', callback);
 
-        if (typeof data === string || data instanceof Buffer) {
+        if (typeof data === 'string' || data instanceof Buffer) {
             req.write(data);
         }
         req.end();
