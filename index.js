@@ -3,6 +3,20 @@ var https = require('https');
 var url = require('url');
 var extend = require('node.extend');
 
+function HttpError() {
+    var temp = Error.apply(this, arguments);
+    temp.name = this.name = 'HttpError';
+    this.stack = temp.stack;
+    this.message = temp.message;
+}
+HttpError.prototype = Object.create(Error.prototype, {
+    constructor: {
+        value: HttpError,
+        writable: true,
+        configurable: true
+    }
+});
+
 function makeHttpOptions(options, method) {
 
     var host, port, path;
@@ -26,19 +40,17 @@ function makeHttpOptions(options, method) {
         'Accept': 'application/json'
     };
 
-    var data = options.data;
-    if (typeof data === 'object') {
+    if (typeof options.data === 'object') {
         try {
-            data = JSON.stringify(data);
+            options.data = JSON.stringify(options.data);
         } catch (err) {
             return err;
         }
     }
-    if (typeof data === 'string') {
+    if (typeof options.data === 'string') {
         headers['Content-Type'] = 'application/json';
-        headers['Content-Length'] = data.length;
+        headers['Content-Length'] = options.data.length;
     }
-    options.data = data || '';
 
     extend(headers, options.headers || {});
 
@@ -74,7 +86,11 @@ function handleResponse(callback, res) {
             response.data = JSON.parse(body);
         } catch (err) {}
         response.body = body;
-        callback(null, response);
+        if (res.statusCode >= 400) {
+            callback(new HttpError(res.statusCode), response);
+        } else {
+            callback(null, response);
+        }
     });
 
     res.on('error', callback);
@@ -89,6 +105,7 @@ function request(method) {
         }
 
         var data = options.data;
+        delete options.data;
 
         var secure = httpOptions.secure;
         delete httpOptions.secure;
