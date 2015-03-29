@@ -73,9 +73,7 @@ function handleResponse(callback, res) {
         callback(null, response);
     });
 
-    res.on('error', function (err) {
-        callback(err);
-    });
+    res.on('error', callback);
 }
 
 function request(method) {
@@ -89,6 +87,8 @@ function request(method) {
 
         var engine = secure ? https : http;
         var req = engine.request(httpOptions, handleResponse.bind(null, callback));
+
+        req.on('error', callback);
 
         req.write(data);
         req.end();
