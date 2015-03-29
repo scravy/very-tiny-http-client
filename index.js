@@ -28,13 +28,17 @@ function makeHttpOptions(options, method) {
 
     var data = options.data;
     if (typeof data === 'object') {
-        data = JSON.stringify(data);
+        try {
+            data = JSON.stringify(data);
+        } catch (err) {
+            return err;
+        }
     }
     if (typeof data === 'string') {
         headers['Content-Type'] = 'application/json';
         headers['Content-Length'] = data.length;
-        options.data = data;
     }
+    options.data = data || '';
 
     extend(headers, options.headers || {});
 
@@ -79,6 +83,10 @@ function handleResponse(callback, res) {
 function request(method) {
     return function (options, callback) {
         var httpOptions = makeHttpOptions(options, method);
+
+        if (httpOptions instanceof Error) {
+            return callback(httpOptions);
+        }
 
         var data = options.data;
 
