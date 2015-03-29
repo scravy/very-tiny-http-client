@@ -43,12 +43,12 @@ function makeHttpOptions(options, method) {
     if (typeof options.data === 'object') {
         try {
             options.data = JSON.stringify(options.data);
+            headers['Content-Type'] = 'application/json';
         } catch (err) {
             return err;
         }
     }
     if (typeof options.data === 'string') {
-        headers['Content-Type'] = 'application/json';
         headers['Content-Length'] = options.data.length;
     }
 
@@ -115,7 +115,9 @@ function request(method) {
 
         req.on('error', callback);
 
-        req.write(data);
+        if (typeof data === string || data instanceof Buffer) {
+            req.write(data);
+        }
         req.end();
     };
 }
