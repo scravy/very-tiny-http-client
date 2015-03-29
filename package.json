@@ -1,0 +1,28 @@
+{
+  "name": "very-tiny-http-client",
+  "version": "1.0.0",
+  "description": "Merely a wrapper around NodeJS's native `http` and `https` packages.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scravy/very-tiny-http-client.git"
+  },
+  "keywords": [
+    "http",
+    "https",
+    "http-client",
+    "client"
+  ],
+  "author": "Julian Fleischer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scravy/very-tiny-http-client/issues"
+  },
+  "homepage": "https://github.com/scravy/very-tiny-http-client",
+  "dependencies": {
+    "node.extend": "^1.1.3"
+  }
+}
